@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeAlgo - Profile</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo">C</div>
+                <span>CubeAlgo</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="problems.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>Problems</span>
+                </a>
+                <a href="#" class="nav-link" id="leaderboardLink">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-header glass">
+                <div class="profile-avatar">
+                    <img src="assets/default-avatar.png" alt="Profile Avatar" id="profileAvatar">
+                    <button class="edit-avatar-btn" id="editAvatarBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-info">
+                    <h1 id="profileUsername">Username</h1>
+                    <p class="profile-email" id="profileEmail">user@example.com</p>
+                    <p class="profile-join">Joined: <span id="joinDate">N/A</span></p>
+                </div>
+            </div>
+
+            <div class="profile-stats glass">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Score</h3>
+                        <p class="stat-value" id="profileScore">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Solved</h3>
+                        <p class="stat-value" id="profileSolved">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Rank</h3>
+                        <p class="stat-value" id="profileRank">-</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Submissions</h3>
+                        <p class="stat-value" id="profileSubmissions">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-details glass">
+                <div class="profile-difficulty">
+                    <h3>Progress by Difficulty</h3>
+                    <div class="difficulty-item">
+                        <span class="difficulty-label easy">Easy</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill easy" id="profileEasyProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="profileEasyCount">0/0</span>
+                    </div>
+                    <div class="difficulty-item">
+                        <span class="difficulty-label medium">Medium</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill medium" id="profileMediumProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="profileMediumCount">0/0</span>
+                    </div>
+                    <div class="difficulty-item">
+                        <span class="difficulty-label hard">Hard</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill hard" id="profileHardProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="profileHardCount">0/0</span>
+                    </div>
+                </div>
+
+                <div class="profile-achievements">
+                    <h3>Achievements</h3>
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <div class="loading-skeleton">
+                            <div class="skeleton-achievement"></div>
+                            <div class="skeleton-achievement"></div>
+                            <div class="skeleton-achievement"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-recent glass">
+                <h3>Recent Solved Problems</h3>
+                <div class="recent-problems" id="recentProblems">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No problems solved yet</p>
+                        <span>Start solving to build your portfolio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/profile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await checkSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadProfile();
+            await loadStats();
+            await loadAchievements();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await logout();
+            showToast('Logged out successfully', 'info');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        });
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        loadTheme();
+
+        document.getElementById('editAvatarBtn').addEventListener('click', () => {
+            document.getElementById('avatarUpload').click();
+        });
+
+        document.getElementById('avatarUpload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const result = await uploadAvatar(file);
+                if (result.success) {
+                    document.getElementById('profileAvatar').src = result.url;
+                    showToast('Avatar updated successfully!', 'success');
+                } else {
+                    showToast(result.error, 'error');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

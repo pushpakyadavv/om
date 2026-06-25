@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeAlgo - Solve Problem</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/solve.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo">C</div>
+                <span>CubeAlgo</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="problems.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>Problems</span>
+                </a>
+                <a href="#" class="nav-link" id="leaderboardLink">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="solve-main">
+        <div class="solve-container">
+            <div class="problem-panel glass">
+                <div class="problem-header">
+                    <h2 id="problemTitle">Loading...</h2>
+                    <span class="difficulty-badge" id="problemDifficulty">Easy</span>
+                    <span class="score-badge" id="problemScore">+10</span>
+                </div>
+                <div class="problem-body">
+                    <div class="problem-section">
+                        <h3>📝 Description</h3>
+                        <div class="problem-description" id="problemDescription">
+                            <div class="loading-skeleton">
+                                <div class="skeleton-text"></div>
+                                <div class="skeleton-text"></div>
+                                <div class="skeleton-text"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="problem-section">
+                        <h3>⚡ Constraints</h3>
+                        <div class="problem-constraints" id="problemConstraints">
+                            <ul>
+                                <li>Loading...</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="problem-section">
+                        <h3>📚 Examples</h3>
+                        <div class="problem-examples" id="problemExamples">
+                            <div class="example-box">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-panel glass">
+                <div class="editor-controls">
+                    <div class="language-selector">
+                        <label for="languageSelect">
+                            <i class="fas fa-code"></i>
+                            Language
+                        </label>
+                        <select id="languageSelect">
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="c">C</option>
+                            <option value="cpp">C++</option>
+                            <option value="java">Java</option>
+                        </select>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="reset-btn" id="resetBtn">
+                            <i class="fas fa-undo"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="code-editor-container">
+                    <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+                </div>
+
+                <div class="editor-footer">
+                    <div class="output-panel" id="outputPanel">
+                        <div class="output-header">
+                            <i class="fas fa-terminal"></i>
+                            <span>Output</span>
+                        </div>
+                        <div class="output-content" id="outputContent">
+                            <span class="output-placeholder">Run your code to see output</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="run-btn" id="runBtn">
+                            <i class="fas fa-play"></i>
+                            Run
+                        </button>
+                        <button class="submit-btn" id="submitBtn">
+                            <i class="fas fa-check"></i>
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/solve.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await checkSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const problemId = urlParams.get('id');
+
+            if (!problemId) {
+                showToast('No problem specified', 'error');
+                setTimeout(() => {
+                    window.location.href = 'problems.html';
+                }, 1000);
+                return;
+            }
+
+            await loadProblem(problemId);
+        });
+
+        document.getElementById('runBtn').addEventListener('click', async () => {
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            await runCode(code, language);
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            await submitSolution(code, language);
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetCode);
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await logout();
+            showToast('Logged out successfully', 'info');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        });
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        loadTheme();
+    </script>
+</body>
+</html>

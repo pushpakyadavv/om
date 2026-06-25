@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeAlgo - Problems</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/problems.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo">C</div>
+                <span>CubeAlgo</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="problems.html" class="nav-link active">
+                    <i class="fas fa-code"></i>
+                    <span>Problems</span>
+                </a>
+                <a href="#" class="nav-link" id="leaderboardLink">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="problems-container">
+            <div class="problems-header">
+                <h1>Problems</h1>
+                <p>Choose a problem and start coding!</p>
+            </div>
+
+            <div class="problems-controls glass">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search problems...">
+                </div>
+                <div class="filter-buttons" id="filterButtons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="easy">Easy</button>
+                    <button class="filter-btn" data-filter="medium">Medium</button>
+                    <button class="filter-btn" data-filter="hard">Hard</button>
+                    <button class="filter-btn" data-filter="solved">Solved</button>
+                    <button class="filter-btn" data-filter="unsolved">Unsolved</button>
+                </div>
+            </div>
+
+            <div class="problems-table-container glass">
+                <table class="problems-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Difficulty</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="problemsBody">
+                        <tr>
+                            <td colspan="6">
+                                <div class="loading-skeleton">
+                                    <div class="skeleton-row"></div>
+                                    <div class="skeleton-row"></div>
+                                    <div class="skeleton-row"></div>
+                                    <div class="skeleton-row"></div>
+                                    <div class="skeleton-row"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <button class="page-btn" id="prevPage" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                    <button class="page-btn" id="nextPage" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/problems.js"></script>
+    <script>
+        // DOM ready - no variable redeclaration
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await checkSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadProblems();
+        });
+
+        // Filter buttons - use the global variables from problems.js
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // These are defined in problems.js
+                window.currentFilter = this.dataset.filter;
+                window.currentPage = 1;
+                loadProblems();
+            });
+        });
+
+        // Search - use debounced function
+        document.getElementById('searchInput').addEventListener('input', function() {
+            window.currentSearch = this.value.toLowerCase();
+            window.currentPage = 1;
+            loadProblems();
+        });
+
+        // Pagination
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (window.currentPage > 1) {
+                window.currentPage--;
+                loadProblems();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            window.currentPage++;
+            loadProblems();
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await logout();
+            showToast('Logged out successfully', 'info');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        });
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        loadTheme();
+    </script>
+</body>
+</html>

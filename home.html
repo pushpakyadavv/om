@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeAlgo - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo">C</div>
+                <span>CubeAlgo</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="home.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="problems.html" class="nav-link">
+                    <i class="fas fa-code"></i>
+                    <span>Problems</span>
+                </a>
+                <a href="#" class="nav-link" id="leaderboardLink">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="dashboard-container">
+            <div class="welcome-section">
+                <h1>Welcome back, <span id="userName">Coder</span>!</h1>
+                <p class="subtitle">Ready to solve some challenges?</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Rank</h3>
+                        <p class="stat-value" id="rank">-</p>
+                    </div>
+                </div>
+
+                <div class="stat-card glass">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Score</h3>
+                        <p class="stat-value" id="score">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card glass">
+                    <div class="stat-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Problems</h3>
+                        <p class="stat-value" id="totalProblems">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card glass">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Solved</h3>
+                        <p class="stat-value" id="solvedProblems">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="difficulty-stats glass">
+                <h2>Progress by Difficulty</h2>
+                <div class="difficulty-grid">
+                    <div class="difficulty-item">
+                        <span class="difficulty-label easy">Easy</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill easy" id="easyProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="easyCount">0/0</span>
+                    </div>
+                    <div class="difficulty-item">
+                        <span class="difficulty-label medium">Medium</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill medium" id="mediumProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="mediumCount">0/0</span>
+                    </div>
+                    <div class="difficulty-item">
+                        <span class="difficulty-label hard">Hard</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill hard" id="hardProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="hardCount">0/0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="leaderboard-preview glass">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Top Coders</h2>
+                        <a href="#" class="view-all">View All →</a>
+                    </div>
+                    <div class="leaderboard-list" id="leaderboardList">
+                        <div class="loading-skeleton">
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity glass">
+                    <div class="section-header">
+                        <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No recent activity</p>
+                            <span>Start solving problems to see your activity here</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/home.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await checkSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadUserData();
+            await loadDashboard();
+            await loadLeaderboard();
+            await loadRecentActivity();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await logout();
+            showToast('Logged out successfully', 'info');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        });
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        loadTheme();
+    </script>
+</body>
+</html>
